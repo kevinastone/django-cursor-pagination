@@ -1,3 +1,4 @@
 django>=1.5.1
 wheel==0.22.0
 # Additional requirements go here
+django-model-utils	# Django 1.7 adds native from_queryset support so this won't be needed
