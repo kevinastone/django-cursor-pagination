@@ -45,3 +45,4 @@ docs/_build
 
 # Local Dev
 .env
+.env3
