@@ -24,7 +24,7 @@ clean-pyc:
 	find . -name '*~' -exec rm -f {} +
 
 lint:
-	flake8 django-cursor-pagination tests
+	flake8 cursor_pagination tests
 
 test:
 	python runtests.py test

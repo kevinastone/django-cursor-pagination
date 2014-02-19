@@ -7,7 +7,7 @@ from cursor_pagination.managers import CursorManager
 
 
 class TestModel(models.Model):
-	date_field = models.DateField()
-	count_field = models.PositiveIntegerField()
-	
-	objects = CursorManager()
+    date_field = models.DateField()
+    count_field = models.PositiveIntegerField()
+
+    objects = CursorManager()

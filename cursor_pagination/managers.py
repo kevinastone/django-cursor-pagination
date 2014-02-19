@@ -8,6 +8,5 @@ from .queryset import CursorQueryset
 
 
 class CursorManager(PassThroughManager):
-	def __init__(self):
-		super(CursorManager, self).__init__(CursorQueryset)
-
+    def __init__(self):
+        super(CursorManager, self).__init__(CursorQueryset)
