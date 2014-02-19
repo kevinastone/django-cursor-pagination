@@ -11,7 +11,6 @@ try:
                 "ENGINE": "django.db.backends.sqlite3",
             }
         },
-        ROOT_URLCONF="cursor_pagination.urls",
         INSTALLED_APPS=[
             "django.contrib.auth",
             "django.contrib.contenttypes",
@@ -20,7 +19,7 @@ try:
             "tests",
         ],
         SITE_ID=1,
-        NOSE_ARGS=['-s', '--logging-filter=tests/cursor_pagination'],
+        NOSE_ARGS=['-s', '--logging-filter=tests,cursor_pagination'],
     )
 
     from django_nose import NoseTestSuiteRunner
