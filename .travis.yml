@@ -6,11 +6,22 @@ python:
   - "3.3"
   - "2.7"
 
+env:
+    - DJANGO="django==1.5.4"
+    - DJANGO="django==1.6.2"
+
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -r test_requirements.txt
+install:
+    - pip install django-model-utils $DJANGO
+    - pip install -r test_requirements.txt
 
 # command to run tests using coverage, e.g. python setup.py test
 script: coverage run --source cursor_pagination runtests.py
 
 # report coverage to coveralls.io
 after_success: coveralls
+
+matrix:
+    exclude:
+        - python: "3.3"
+          env: DJANGO="django==1.5.4"
