@@ -14,4 +14,3 @@ class CursorBaseTestCase(TestCase):
     def setUp(self):
         for i in range(self.NUM_ITEMS):
             TestModelFactory.create()
-

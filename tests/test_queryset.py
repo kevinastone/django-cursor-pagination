@@ -28,6 +28,6 @@ class TestCursorPagination(CursorBaseTestCase):
 
         self.assertEqual(
             len(queryset1.query.where.children),
-            len(queryset2.query.where.children), 
+            len(queryset2.query.where.children),
             "Cursor generated querysets had different where clause lengths"
         )

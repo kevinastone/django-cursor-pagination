@@ -34,7 +34,7 @@ class CursorQueryset(models.query.QuerySet):
         return self._get_cursor(ascending=False)
 
     def from_cursor(self, cursor):
-        qs = self.filter(~models.Q(pk=cursor.pk))
+        qs = self
         for parameter in cursor.parameters:
             qs = qs.filter(**parameter.filter_param)
         return qs

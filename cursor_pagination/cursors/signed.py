@@ -91,10 +91,10 @@ def loads(s, key=None, salt='django.core.signing',
 class SignedBase64Cursor(BaseCursor):
 
     def to_token(self):
-        return dumps([self.pk, self.parameters])
+        return dumps(self.parameters)
 
     @classmethod
     def from_token(cls, token):
-        pk, params = loads(token)
+        params = loads(token)
         parameters = [CursorParameter.from_json(p) for p in params]
-        return cls(pk, *parameters)
+        return cls(*parameters)

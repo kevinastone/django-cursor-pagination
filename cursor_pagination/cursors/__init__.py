@@ -45,19 +45,24 @@ class CursorParameter(object):
 
 
 class BaseCursor(object):
-    def __init__(self, pk, *parameters):
-        self.pk = pk
+    def __init__(self, *parameters):
         self.parameters = parameters
 
     @staticmethod
     def get_ordering(queryset):
         ordering = list(queryset.query.extra_order_by) + \
             list(queryset.query.order_by)
-        if ordering:
-            return ordering
-        if queryset.query.default_ordering:
-            ordering = queryset.query.get_meta().ordering
-        return ()
+        if not ordering and queryset.query.default_ordering:
+            ordering = list(queryset.query.get_meta().ordering)
+        if not ordering:
+            ordering = []
+
+        # Force primary key to be in the ordering to ensure consistent ordering
+        pk_field_name = queryset.query.get_meta().pk.name
+        if 'pk' not in ordering and pk_field_name not in ordering:
+            ordering.append('pk')
+
+        return ordering
 
     @classmethod
     def from_queryset(cls, queryset, obj, ascending=True):
@@ -81,17 +86,13 @@ class BaseCursor(object):
                 ascending=parameter_ascending, unique=field.unique
             )
             parameters.append(parameter)
-        return cls(obj.pk, *parameters)
+        return cls(*parameters)
 
     def __repr__(self):
         return "{cls}({pk}, {parameters})".format(
             cls=self.__class__.__name__,
-            pk=repr(self.pk),
             parameters=', '.join(repr(x) for x in self.parameters)
         )
 
     def __eq__(self, other):
-        return all([
-            self.pk == other.pk,
-            self.parameters == other.parameters
-        ])
+        return self.parameters == other.parameters
