@@ -23,7 +23,7 @@ class CursorJSONEncoder(DjangoJSONEncoder):
     JSON Encoder subclass that knows how to serialize cursor parameters
     """
     def __init__(self, *args, **kwargs):
-        kwargs.update(dict(separators=(',', ':'), encoding='latin-1'))
+        kwargs.update(dict(separators=(',', ':')))
         return super(CursorJSONEncoder, self).__init__(*args, **kwargs)
 
     def default(self, o):
@@ -50,7 +50,7 @@ def dumps(obj, key=None, salt='django.core.signing',
 
     The serializer is expected to return a bytestring.
     """
-    data = json.dumps(obj, cls=CursorJSONEncoder)
+    data = json.dumps(obj, cls=CursorJSONEncoder).encode('latin-1')
 
     # Flag for if it's been compressed or not
     is_compressed = False
