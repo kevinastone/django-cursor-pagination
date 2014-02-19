@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models.sql.query import Query
 
 # TODO: Make this configurable
-from .cursors import SignedBase64Cursor as Cursor
+from .cursors.signed import SignedBase64Cursor as Cursor
 
 
 class CursorQueryset(models.query.QuerySet):

@@ -1,6 +1,5 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
-
-from django.core import signing
 
 
 class CursorParameter(object):
@@ -24,6 +23,22 @@ class CursorParameter(object):
                 operator=operator): self.value
         }
         return param
+
+    def to_json(self):
+        return [self.field_name, self.value, self.ascending, self.unique]
+
+    @classmethod
+    def from_json(cls, data):
+        return cls(*data)
+
+    def __repr__(self):
+        return "CursorParameter({field_name}, {value}, " \
+            "ascending={ascending}, unique={unique})".format(
+                field_name=repr(self.field_name),
+                value=repr(self.value),
+                ascending=repr(self.ascending),
+                unique=repr(self.unique)
+            )
 
 
 class BaseCursor(object):
@@ -65,13 +80,9 @@ class BaseCursor(object):
             parameters.append(parameter)
         return cls(obj.pk, *parameters)
 
-
-class SignedBase64Cursor(BaseCursor):
-
-    def to_token(self):
-        return signing.dumps([self.pk, self.parameters])
-
-    @classmethod
-    def from_token(cls, token):
-        pk, params = signing.loads(token)
-        return cls(pk, *params)
+    def __repr__(self):
+        return "{cls}({pk}, {parameters})".format(
+            cls=self.__class__.__name__,
+            pk=repr(self.pk),
+            parameters=', '.join(repr(x) for x in self.parameters)
+        )
