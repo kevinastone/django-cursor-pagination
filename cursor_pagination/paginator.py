@@ -28,9 +28,8 @@ class Paginator(object):
 
     def from_cursor(self, cursor):
         assert isinstance(self.pristine_object_list, CursorQueryset)
-        self.pristine_object_list = \
-            self.pristine_object_list.from_cursor(cursor)
-        self.object_list = self.pristine_object_list[0:self.per_page]
+        self.object_list = self.pristine_object_list \
+            .from_cursor(cursor)[0:self.per_page]
 
     def next_cursor(self):
         assert isinstance(self.object_list, CursorQueryset)
