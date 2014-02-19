@@ -3,46 +3,33 @@
 
 """
 Test Paginator
-------------
+--------------
 
 Tests for `django-cursor-pagination` paginator module.
 """
 from __future__ import absolute_import
 
-from django.test import TestCase
-
-from .factories import TestModelFactory
-from .models import TestModel
-
 from cursor_pagination.paginator import Paginator
 
-
-NUM_ITEMS = 200
-PAGE_SIZE = 25
-
-TOO_MANY_PAGES = 1000
+from .base import CursorBaseTestCase
+from .models import TestModel
 
 
-class TestCursorPagination(TestCase):
-
-    def setUp(self):
-        for i in range(NUM_ITEMS):
-            TestModelFactory.create()
-
+class TestCursorPagination(CursorBaseTestCase):
     def test_pagination(self):
         queryset = TestModel.objects.order_by('pk')
         page_count = 0
         object_count = 0
-        paginator = Paginator(queryset, PAGE_SIZE)
-        for i in range(TOO_MANY_PAGES):
-            page_size = len(paginator)
-            if not page_size:
+        paginator = Paginator(queryset, self.PAGE_SIZE)
+        for i in range(self.TOO_MANY_PAGES):
+            self.page_size = len(paginator)
+            if not self.page_size:
                 break
-            object_count += page_size
+            object_count += self.page_size
             page_count += 1
 
             cursor = paginator.next_cursor()
             paginator.from_cursor(cursor)
 
-        self.assertEqual(object_count, NUM_ITEMS)
-        self.assertEqual(page_count, NUM_ITEMS / PAGE_SIZE)
+        self.assertEqual(object_count, self.NUM_ITEMS)
+        self.assertEqual(page_count, self.NUM_ITEMS / self.PAGE_SIZE)

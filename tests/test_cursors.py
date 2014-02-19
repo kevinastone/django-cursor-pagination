@@ -9,27 +9,16 @@ Tests for `django-cursor-pagination` cursors module.
 """
 from __future__ import absolute_import
 
-from django.test import TestCase
-
-from .factories import TestModelFactory
-from .models import TestModel
-
 from cursor_pagination.cursors.signed import SignedBase64Cursor as Cursor
 
+from .base import CursorBaseTestCase
+from .models import TestModel
 
-NUM_ITEMS = 200
-PAGE_SIZE = 25
 
-
-class TestCursors(TestCase):
-
-    def setUp(self):
-        for i in range(NUM_ITEMS):
-            TestModelFactory.create()
-
+class TestCursors(CursorBaseTestCase):
     def test_tokenization(self):
         original_queryset = TestModel.objects.order_by('pk')
-        value = original_queryset[PAGE_SIZE]
+        value = original_queryset[self.PAGE_SIZE]
         cursor = Cursor.from_queryset(original_queryset, value)
 
         token = cursor.to_token()
@@ -42,7 +31,7 @@ class TestCursors(TestCase):
 
     def test_equivalence(self):
         original_queryset = TestModel.objects.order_by('pk')
-        value = original_queryset[PAGE_SIZE]
+        value = original_queryset[self.PAGE_SIZE]
         cursor = Cursor.from_queryset(original_queryset, value)
         cursor2 = Cursor.from_queryset(original_queryset, value)
 
@@ -50,7 +39,7 @@ class TestCursors(TestCase):
 
     def test_serialization(self):
         original_queryset = TestModel.objects.order_by('pk')
-        value = original_queryset[PAGE_SIZE]
+        value = original_queryset[self.PAGE_SIZE]
         cursor = Cursor.from_queryset(original_queryset, value)
 
         token = cursor.to_token()

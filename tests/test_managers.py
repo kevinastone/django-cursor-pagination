@@ -3,36 +3,25 @@
 
 """
 Test Managers
-------------
+-------------
 
 Tests for `django-cursor-pagination` managers module.
 """
 from __future__ import absolute_import
 
-from django.test import TestCase
-
-from .factories import TestModelFactory
+from .base import CursorBaseTestCase
 from .models import TestModel
 
 
-NUM_ITEMS = 200
-PAGE_SIZE = 25
-
-
-class TestCursorManagerByPrimaryKey(TestCase):
-
-    def setUp(self):
-        for i in range(NUM_ITEMS):
-            TestModelFactory.create()
-
+class TestCursorManagerByPrimaryKey(CursorBaseTestCase):
     def test_ordering_next_ascending(self):
         qs = TestModel.objects.order_by('pk')
-        first_group = qs[:PAGE_SIZE]
+        first_group = qs[:self.PAGE_SIZE]
         cursor = first_group.next_cursor()
 
         qs2 = qs.from_cursor(cursor)
 
-        second_group = qs2[:PAGE_SIZE]
+        second_group = qs2[:self.PAGE_SIZE]
 
         first_pks = set(x.pk for x in first_group)
         second_pks = set(x.pk for x in second_group)
@@ -46,12 +35,12 @@ class TestCursorManagerByPrimaryKey(TestCase):
 
     def test_ordering_previous_ascending(self):
         qs = TestModel.objects.order_by('pk')
-        first_group = qs[PAGE_SIZE:2*PAGE_SIZE]
+        first_group = qs[self.PAGE_SIZE:2*self.PAGE_SIZE]
         cursor = first_group.previous_cursor()
 
         qs2 = qs.from_cursor(cursor)
 
-        second_group = qs2[:PAGE_SIZE]
+        second_group = qs2[:self.PAGE_SIZE]
 
         first_pks = set(x.pk for x in first_group)
         second_pks = set(x.pk for x in second_group)
@@ -65,12 +54,12 @@ class TestCursorManagerByPrimaryKey(TestCase):
 
     def test_ordering_next_descending(self):
         qs = TestModel.objects.order_by('-pk')
-        first_group = qs[:PAGE_SIZE]
+        first_group = qs[:self.PAGE_SIZE]
         cursor = first_group.next_cursor()
 
         qs2 = qs.from_cursor(cursor)
 
-        second_group = qs2[:PAGE_SIZE]
+        second_group = qs2[:self.PAGE_SIZE]
 
         first_pks = set(x.pk for x in first_group)
         second_pks = set(x.pk for x in second_group)
@@ -84,12 +73,12 @@ class TestCursorManagerByPrimaryKey(TestCase):
 
     def test_ordering_previous_descending(self):
         qs = TestModel.objects.order_by('-pk')
-        first_group = qs[PAGE_SIZE:2*PAGE_SIZE]
+        first_group = qs[self.PAGE_SIZE:2*self.PAGE_SIZE]
         cursor = first_group.previous_cursor()
 
         qs2 = qs.from_cursor(cursor)
 
-        second_group = qs2[:PAGE_SIZE]
+        second_group = qs2[:self.PAGE_SIZE]
 
         first_pks = set(x.pk for x in first_group)
         second_pks = set(x.pk for x in second_group)
@@ -102,20 +91,15 @@ class TestCursorManagerByPrimaryKey(TestCase):
             )
 
 
-class TestCursorManagerByInteger(TestCase):
-
-    def setUp(self):
-        for i in range(NUM_ITEMS):
-            TestModelFactory.create()
-
+class TestCursorManagerByInteger(CursorBaseTestCase):
     def test_ordering_next_ascending(self):
         qs = TestModel.objects.order_by('count_field')
-        first_group = qs[:PAGE_SIZE]
+        first_group = qs[:self.PAGE_SIZE]
         cursor = first_group.next_cursor()
 
         qs2 = qs.from_cursor(cursor)
 
-        second_group = qs2[:PAGE_SIZE]
+        second_group = qs2[:self.PAGE_SIZE]
 
         first_counts = set(x.count_field for x in first_group)
         second_counts = set(x.count_field for x in second_group)
@@ -128,12 +112,12 @@ class TestCursorManagerByInteger(TestCase):
 
     def test_ordering_previous_ascending(self):
         qs = TestModel.objects.order_by('count_field')
-        first_group = qs[PAGE_SIZE:2*PAGE_SIZE]
+        first_group = qs[self.PAGE_SIZE:2*self.PAGE_SIZE]
         cursor = first_group.previous_cursor()
 
         qs2 = qs.from_cursor(cursor)
 
-        second_group = qs2[:PAGE_SIZE]
+        second_group = qs2[:self.PAGE_SIZE]
 
         first_counts = set(x.count_field for x in first_group)
         second_counts = set(x.count_field for x in second_group)
@@ -146,12 +130,12 @@ class TestCursorManagerByInteger(TestCase):
 
     def test_ordering_next_descending(self):
         qs = TestModel.objects.order_by('-count_field')
-        first_group = qs[:PAGE_SIZE]
+        first_group = qs[:self.PAGE_SIZE]
         cursor = first_group.next_cursor()
 
         qs2 = qs.from_cursor(cursor)
 
-        second_group = qs2[:PAGE_SIZE]
+        second_group = qs2[:self.PAGE_SIZE]
 
         first_counts = set(x.count_field for x in first_group)
         second_counts = set(x.count_field for x in second_group)
@@ -164,12 +148,12 @@ class TestCursorManagerByInteger(TestCase):
 
     def test_ordering_previous_descending(self):
         qs = TestModel.objects.order_by('-count_field')
-        first_group = qs[PAGE_SIZE:2*PAGE_SIZE]
+        first_group = qs[self.PAGE_SIZE:2*self.PAGE_SIZE]
         cursor = first_group.previous_cursor()
 
         qs2 = qs.from_cursor(cursor)
 
-        second_group = qs2[:PAGE_SIZE]
+        second_group = qs2[:self.PAGE_SIZE]
 
         first_counts = set(x.count_field for x in first_group)
         second_counts = set(x.count_field for x in second_group)
