@@ -36,6 +36,8 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
+        "django>=1.5",
+        "django-model-utils",  # Django 1.7 adds native from_queryset support so this won't be needed
     ],
     license="BSD",
     zip_safe=False,
@@ -47,7 +49,6 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
