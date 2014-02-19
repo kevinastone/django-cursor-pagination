@@ -31,3 +31,19 @@ class TestCursorPagination(CursorBaseTestCase):
             len(queryset2.query.where.children),
             "Cursor generated querysets had different where clause lengths"
         )
+
+    def test_queryset_uses_cache(self):
+        queryset = CursorQueryset(model=TestModel).order_by('pk')
+
+        # Generate the queryset once to build the cursor
+        with self.assertNumQueries(1):
+            queryset[:self.PAGE_SIZE].next_cursor()
+
+        # But if we first consume the queryset, the cursor should use the cache
+        with self.assertNumQueries(1):
+            qs = queryset[:self.PAGE_SIZE]
+            # Iterating over the qs should be one db call
+            for x in qs:
+                pass
+            # But should also prime the cache for the cursor generation
+            qs.next_cursor()

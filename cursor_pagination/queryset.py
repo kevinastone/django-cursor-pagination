@@ -17,13 +17,12 @@ class CursorQueryset(models.query.QuerySet):
                 "Cannot retrieve cursor unless a Query is available"
             )
 
-        qs = self._clone()
         if ascending:
             mark = query.high_mark - query.low_mark - 1
         else:
             mark = 0
 
-        value = qs[mark]
+        value = self[mark]
         cursor = Cursor.from_queryset(self, value, ascending=ascending)
         return cursor
 
