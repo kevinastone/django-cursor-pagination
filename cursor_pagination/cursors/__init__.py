@@ -31,6 +31,9 @@ class CursorParameter(object):
     def from_json(cls, data):
         return cls(*data)
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
     def __repr__(self):
         return "CursorParameter({field_name}, {value}, " \
             "ascending={ascending}, unique={unique})".format(
@@ -86,3 +89,9 @@ class BaseCursor(object):
             pk=repr(self.pk),
             parameters=', '.join(repr(x) for x in self.parameters)
         )
+
+    def __eq__(self, other):
+        return all([
+            self.pk == other.pk,
+            self.parameters == other.parameters
+        ])
