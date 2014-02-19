@@ -27,7 +27,7 @@ Install django-cursor-pagination::
 
 Then use it in a project::
 
-    import django-cursor-pagination
+    import cursor_pagination
 
 Features
 --------
