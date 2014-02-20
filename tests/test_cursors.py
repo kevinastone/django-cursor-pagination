@@ -9,21 +9,38 @@ Tests for `django-cursor-pagination` cursors module.
 """
 from __future__ import absolute_import
 
-from cursor_pagination.cursors.signed import SignedBase64Cursor as Cursor
+from django.utils import six
+
+from cursor_pagination.cursors.signed import SignedBase64Cursor
 
 from .base import CursorBaseTestCase
 from .models import TestModel
 
 
-class TestCursors(CursorBaseTestCase):
+class CursorInterfaceTestMixin(object):
     def test_tokenization(self):
+        """
+        Tests generating tokens either via direct call or conversion to string.
+        """
         original_queryset = TestModel.objects.order_by('pk')
         value = original_queryset[self.PAGE_SIZE]
-        cursor = Cursor.from_queryset(original_queryset, value)
+        cursor = self.cursor_class.from_queryset(original_queryset, value)
+
+        token = cursor.to_token()
+        str_token = six.text_type(token)
+        self.assertEqual(token, str_token)
+
+    def test_untokenization(self):
+        """
+        Ensures that tokenized cursors return the same cursor.
+        """
+        original_queryset = TestModel.objects.order_by('pk')
+        value = original_queryset[self.PAGE_SIZE]
+        cursor = self.cursor_class.from_queryset(original_queryset, value)
 
         token = cursor.to_token()
 
-        cursor2 = Cursor.from_token(token)
+        cursor2 = self.cursor_class.from_token(token)
         self.assertEqual(cursor, cursor2)
 
         token2 = cursor2.to_token()
@@ -32,19 +49,19 @@ class TestCursors(CursorBaseTestCase):
     def test_equivalence(self):
         original_queryset = TestModel.objects.order_by('pk')
         value = original_queryset[self.PAGE_SIZE]
-        cursor = Cursor.from_queryset(original_queryset, value)
-        cursor2 = Cursor.from_queryset(original_queryset, value)
+        cursor = self.cursor_class.from_queryset(original_queryset, value)
+        cursor2 = self.cursor_class.from_queryset(original_queryset, value)
 
         self.assertEqual(cursor, cursor2)
 
     def test_serialization(self):
         original_queryset = TestModel.objects.order_by('pk')
         value = original_queryset[self.PAGE_SIZE]
-        cursor = Cursor.from_queryset(original_queryset, value)
+        cursor = self.cursor_class.from_queryset(original_queryset, value)
 
         token = cursor.to_token()
 
-        cursor2 = Cursor.from_token(token)
+        cursor2 = self.cursor_class.from_token(token)
 
         qs = cursor.queryset(original_queryset)
         qs2 = cursor2.queryset(original_queryset)
@@ -53,3 +70,7 @@ class TestCursors(CursorBaseTestCase):
         pks2 = set([x.pk for x in qs2])
 
         self.assertEqual(pks, pks2)
+
+
+class TestSignedBase64Cursor(CursorInterfaceTestMixin, CursorBaseTestCase):
+    cursor_class = SignedBase64Cursor

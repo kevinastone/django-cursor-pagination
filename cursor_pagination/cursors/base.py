@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+from django.utils.encoding import python_2_unicode_compatible
+
 from django.db.models.sql.query import Query
 
 
@@ -46,6 +48,7 @@ class CursorParameter(object):
             )
 
 
+@python_2_unicode_compatible
 class BaseCursor(object):
     def __init__(self, *parameters):
         self.parameters = parameters
@@ -117,6 +120,18 @@ class BaseCursor(object):
         for parameter in self.parameters:
             queryset = queryset.filter(**parameter.filter_param)
         return queryset
+
+    def to_token(self):
+        raise NotImplementedError(
+            "Need to implement `to_token` in a sub-class")
+
+    @classmethod
+    def from_token(cls, token):
+        raise NotImplementedError(
+            "Need to implement `from_token` in a sub-class")
+
+    def __str__(self):
+        return self.to_token()
 
     def __repr__(self):
         return "{cls}({pk}, {parameters})".format(
