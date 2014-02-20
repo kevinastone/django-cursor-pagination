@@ -46,8 +46,8 @@ class TestCursors(CursorBaseTestCase):
 
         cursor2 = Cursor.from_token(token)
 
-        qs = original_queryset.from_cursor(cursor)
-        qs2 = original_queryset.from_cursor(cursor2)
+        qs = cursor.queryset(original_queryset)
+        qs2 = cursor2.queryset(original_queryset)
 
         pks = set([x.pk for x in qs])
         pks2 = set([x.pk for x in qs2])
