@@ -26,7 +26,7 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 setup(
     name='django-cursor-pagination',
     version=version,
-    description="""Your project description goes here""",
+    description="""Cursor based Pagination and Iteration for Django Querysets""",
     long_description=readme + '\n\n' + history,
     author='Kevin Stone',
     author_email='kevinastone@gmail.com',
