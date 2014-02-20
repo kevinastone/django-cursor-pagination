@@ -35,6 +35,14 @@ class CursorParameter(object):
     def from_json(cls, data):
         return cls(*data)
 
+    def reverse(self):
+        return self.__class__(
+            self.field_name,
+            self.value,
+            not self.ascending,
+            self.unique
+        )
+
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
@@ -129,6 +137,9 @@ class BaseCursor(object):
     def from_token(cls, token):
         raise NotImplementedError(
             "Need to implement `from_token` in a sub-class")
+
+    def reverse(self):
+        return self.__class__(*[p.reverse() for p in self.parameters])
 
     def __str__(self):
         return self.to_token()
