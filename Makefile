@@ -33,10 +33,8 @@ test-all:
 	tox
 
 coverage:
-	coverage run --source django-cursor-pagination setup.py test
+	coverage run --source cursor_pagination runtests.py
 	coverage report -m
-	coverage html
-	open htmlcov/index.html
 
 docs:
 	rm -f docs/django-cursor-pagination.rst
