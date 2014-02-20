@@ -11,3 +11,6 @@ class TestModel(models.Model):
     count_field = models.PositiveIntegerField()
 
     objects = CursorManager()
+
+    class Meta:
+        ordering = ['pk']

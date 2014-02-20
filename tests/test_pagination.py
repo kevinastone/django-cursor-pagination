@@ -16,16 +16,16 @@ from .models import TestModel
 
 
 class TestCursorPagination(CursorBaseTestCase):
-    def test_pagination(self):
-        queryset = TestModel.objects.order_by('pk')
+    def test_iteration(self):
+        queryset = TestModel.objects.all()
         page_count = 0
         object_count = 0
         paginator = Paginator(queryset, self.PAGE_SIZE)
         for i in range(self.TOO_MANY_PAGES):
-            self.page_size = len(paginator)
-            if not self.page_size:
+            page_size = len(paginator)
+            if not page_size:
                 break
-            object_count += self.page_size
+            object_count += page_size
             page_count += 1
 
             cursor = paginator.next_cursor()

@@ -134,7 +134,7 @@ class BaseCursor(object):
         return self.to_token()
 
     def __repr__(self):
-        return "{cls}({pk}, {parameters})".format(
+        return "{cls}({parameters})".format(
             cls=self.__class__.__name__,
             parameters=', '.join(repr(x) for x in self.parameters)
         )

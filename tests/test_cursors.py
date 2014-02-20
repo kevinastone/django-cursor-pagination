@@ -11,6 +11,7 @@ from __future__ import absolute_import
 
 from django.utils import six
 
+from cursor_pagination.cursors import CursorParameter
 from cursor_pagination.cursors.signed import SignedBase64Cursor
 
 from .base import CursorBaseTestCase
@@ -22,7 +23,7 @@ class CursorInterfaceTestMixin(object):
         """
         Tests generating tokens either via direct call or conversion to string.
         """
-        original_queryset = TestModel.objects.order_by('pk')
+        original_queryset = TestModel.objects.all()
         value = original_queryset[self.PAGE_SIZE]
         cursor = self.cursor_class.from_queryset(original_queryset, value)
 
@@ -34,7 +35,7 @@ class CursorInterfaceTestMixin(object):
         """
         Ensures that tokenized cursors return the same cursor.
         """
-        original_queryset = TestModel.objects.order_by('pk')
+        original_queryset = TestModel.objects.all()
         value = original_queryset[self.PAGE_SIZE]
         cursor = self.cursor_class.from_queryset(original_queryset, value)
 
@@ -47,15 +48,31 @@ class CursorInterfaceTestMixin(object):
         self.assertEqual(token, token2)
 
     def test_equivalence(self):
-        original_queryset = TestModel.objects.order_by('pk')
+        original_queryset = TestModel.objects.all()
         value = original_queryset[self.PAGE_SIZE]
         cursor = self.cursor_class.from_queryset(original_queryset, value)
         cursor2 = self.cursor_class.from_queryset(original_queryset, value)
 
         self.assertEqual(cursor, cursor2)
 
+    def test_repr_constructor_syntax(self):
+        """
+        Ensures that the :func:`repr` creates a valid constructor.
+        """        
+        original_queryset = TestModel.objects.all()
+        value = original_queryset[self.PAGE_SIZE]
+        cursor = self.cursor_class.from_queryset(original_queryset, value)
+
+        cursor2 = eval(repr(cursor), {
+            'CursorParameter': CursorParameter,
+            self.cursor_class.__name__: self.cursor_class,
+        })
+
+        self.assertEqual(cursor, cursor2)
+
+
     def test_serialization(self):
-        original_queryset = TestModel.objects.order_by('pk')
+        original_queryset = TestModel.objects.all()
         value = original_queryset[self.PAGE_SIZE]
         cursor = self.cursor_class.from_queryset(original_queryset, value)
 
