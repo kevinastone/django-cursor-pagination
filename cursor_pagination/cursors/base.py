@@ -1,35 +1,39 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+import operator
+
 from django.utils.encoding import python_2_unicode_compatible
 
+from django.db.models import Q
 from django.db.models.sql.query import Query
 
 
 class CursorParameter(object):
-    def __init__(self, field_name, value, ascending=True, unique=False):
+    def __init__(self, field_name, value, ascending=True):
         self.field_name = field_name
         self.value = value
         self.ascending = ascending
-        self.unique = unique
 
     @property
     def filter_param(self):
-        operator = "gt" if self.ascending else "lt"
-
-        if not self.unique:
-            # If the field is not unique, we have to permit equivalent values
-            operator = operator + "e"
+        comparison = "gt" if self.ascending else "lt"
 
         param = {
-            "{field_name}__{operator}".format(
+            "{field_name}__{comparison}".format(
                 field_name=self.field_name,
-                operator=operator): self.value
+                comparison=comparison): self.value
         }
-        return param
+        return Q(**param)
+
+    @property
+    def eq_param(self):
+        return Q(**{
+            self.field_name: self.value
+        })
 
     def to_json(self):
-        return [self.field_name, self.value, self.ascending, self.unique]
+        return [self.field_name, self.value, self.ascending]
 
     @classmethod
     def from_json(cls, data):
@@ -40,7 +44,6 @@ class CursorParameter(object):
             self.field_name,
             self.value,
             not self.ascending,
-            self.unique
         )
 
     def __eq__(self, other):
@@ -48,11 +51,10 @@ class CursorParameter(object):
 
     def __repr__(self):
         return "CursorParameter({field_name}, {value}, " \
-            "ascending={ascending}, unique={unique})".format(
+            "ascending={ascending})".format(
                 field_name=repr(self.field_name),
                 value=repr(self.value),
                 ascending=repr(self.ascending),
-                unique=repr(self.unique)
             )
 
 
@@ -61,8 +63,19 @@ class BaseCursor(object):
     def __init__(self, *parameters):
         self.parameters = parameters
 
-    @staticmethod
-    def get_ordering(queryset):
+    @classmethod
+    def name_to_field(cls, queryset, field_name):
+        if field_name[0] == '-':
+            # parameter_ascending = not ascending
+            field_name = field_name[1:]
+        if field_name == 'pk':
+            field = queryset.query.get_meta().pk
+        else:
+            field = queryset.query.get_meta().get_field(field_name)
+        return field
+
+    @classmethod
+    def get_ordering(cls, queryset):
         ordering = list(queryset.query.extra_order_by) + \
             list(queryset.query.order_by)
         if not ordering and queryset.query.default_ordering:
@@ -75,7 +88,16 @@ class BaseCursor(object):
         if 'pk' not in ordering and pk_field_name not in ordering:
             ordering.append('pk')
 
-        return ordering
+        # Iterate and quit when you find the first unique column
+        # (the remainder are irrelevant)
+        sort_ordering = []
+        for field_name in ordering:
+            sort_ordering.append(field_name)
+            field = cls.name_to_field(queryset, field_name)
+            if field.unique:
+                break
+
+        return sort_ordering
 
     @classmethod
     def _get_edge_item(cls, queryset, ascending=True):
@@ -109,25 +131,25 @@ class BaseCursor(object):
 
             if field_name[0] == '-':
                 parameter_ascending = not ascending
-                field_name = field_name[1:]
-
-            if field_name == 'pk':
-                field = queryset.query.get_meta().pk
-            else:
-                field = queryset.query.get_meta().get_field(field_name)
+            field = cls.name_to_field(queryset, field_name)
 
             parameter = CursorParameter(
-                field_name,
-                value=getattr(border_obj, field_name),
-                ascending=parameter_ascending, unique=field.unique
+                field.get_attname(),
+                value=getattr(border_obj, field.get_attname()),
+                ascending=parameter_ascending,
             )
             parameters.append(parameter)
         return cls(*parameters)
 
     def queryset(self, queryset):
+        params = []
+        stacked_params = Q()
         for parameter in self.parameters:
-            queryset = queryset.filter(**parameter.filter_param)
-        return queryset
+            params.append(parameter.filter_param & stacked_params)
+            stacked_params &= parameter.eq_param
+        queryset = queryset.filter(reduce(operator.or_, params))
+        ordering = self.get_ordering(queryset)
+        return queryset.order_by(*ordering)
 
     def to_token(self):
         raise NotImplementedError(

@@ -14,6 +14,7 @@ from cursor_pagination.queryset import CursorQueryset
 from .base import CursorBaseTestCase
 
 from .models import TestModel
+from .factories import TestModelFactory
 
 
 class TestCursorPagination(CursorBaseTestCase):
@@ -47,3 +48,27 @@ class TestCursorPagination(CursorBaseTestCase):
                 pass
             # But should also prime the cache for the cursor generation
             qs.next_cursor()
+
+    def test_queryset_consistent_with_data_insert(self):
+        """
+        Ensures that a cursor returned from a queryset stays fixed when new
+        items are inserted.
+        """
+        queryset = CursorQueryset(model=TestModel).order_by('count_field')
+        cursor = queryset[:self.PAGE_SIZE].next_cursor()
+
+        expected = set([
+            x.pk for x in queryset[self.PAGE_SIZE:2*self.PAGE_SIZE]
+        ])
+
+        last = queryset[:self.PAGE_SIZE][self.PAGE_SIZE - 1]
+
+        # Now add some instances that would change the indexing
+        for i in range(10):
+            TestModelFactory.create(count_field=last.count_field - 1)
+
+        queryset2 = queryset.from_cursor(cursor)
+
+        actual = set([x.pk for x in queryset2[:self.PAGE_SIZE]])
+        
+        self.assertSetEqual(expected, actual)
