@@ -10,10 +10,9 @@ class Paginator(object):
     def __init__(self, object_list, per_page, cursor=None):
         self.per_page = int(per_page)
         self.pristine_object_list = object_list
-        self.object_list = object_list[0:self.per_page]
-
         if cursor:
-            self.from_cursor(cursor)
+            object_list = cursor.queryset(object_list)
+        self.object_list = object_list[0:self.per_page]
 
     def __iter__(self):
         return iter(self.object_list)
@@ -28,13 +27,9 @@ class Paginator(object):
 
     def from_cursor(self, cursor):
         assert isinstance(self.pristine_object_list, CursorQueryset)
-        self.object_list = self.pristine_object_list \
-            .from_cursor(cursor)[0:self.per_page]
+        self.object_list = \
+            cursor.queryset(self.pristine_object_list)[0:self.per_page]
 
     def next_cursor(self):
         assert isinstance(self.object_list, CursorQueryset)
         return self.object_list.next_cursor()
-
-    def previous_cursor(self):
-        assert isinstance(self.object_list, CursorQueryset)
-        return self.object_list.previous_cursor()

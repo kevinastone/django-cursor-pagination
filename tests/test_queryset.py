@@ -18,7 +18,7 @@ from .models import TestModel
 
 class TestCursorPagination(CursorBaseTestCase):
     def test_queryset_where_clauses(self):
-        queryset = CursorQueryset(model=TestModel).order_by('pk')
+        queryset = CursorQueryset(model=TestModel).all()
 
         cursor1 = queryset[:self.PAGE_SIZE].next_cursor()
         queryset1 = queryset.from_cursor(cursor1)
@@ -33,7 +33,7 @@ class TestCursorPagination(CursorBaseTestCase):
         )
 
     def test_queryset_uses_cache(self):
-        queryset = CursorQueryset(model=TestModel).order_by('pk')
+        queryset = CursorQueryset(model=TestModel).all()
 
         # Generate the queryset once to build the cursor
         with self.assertNumQueries(1):
