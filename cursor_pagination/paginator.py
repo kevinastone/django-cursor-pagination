@@ -6,7 +6,7 @@ from django.utils import six
 from .queryset import CursorQueryset
 
 
-class Paginator(object):
+class Paginator(six.Iterator):
     def __init__(self, object_list, per_page, cursor=None):
         self.per_page = int(per_page)
         self.pristine_object_list = object_list
@@ -30,6 +30,6 @@ class Paginator(object):
         self.object_list = \
             cursor.queryset(self.pristine_object_list)[0:self.per_page]
 
-    def next_cursor(self):
+    def __next__(self):
         assert isinstance(self.object_list, CursorQueryset)
         return self.object_list.next_cursor()

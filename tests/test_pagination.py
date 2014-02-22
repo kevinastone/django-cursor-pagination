@@ -28,7 +28,7 @@ class TestCursorPagination(CursorBaseTestCase):
             object_count += page_size
             page_count += 1
 
-            cursor = paginator.next_cursor()
+            cursor = next(paginator)
             paginator.from_cursor(cursor)
 
         self.assertEqual(object_count, self.NUM_ITEMS)
@@ -40,7 +40,7 @@ class TestCursorPagination(CursorBaseTestCase):
         object_count = 0
         paginator = Paginator(queryset, self.PAGE_SIZE)
 
-        cursor = paginator.next_cursor()
+        cursor = next(paginator)
         paginator2 = Paginator(queryset, self.PAGE_SIZE, cursor=cursor)
 
         for i in range(self.TOO_MANY_PAGES):
@@ -50,7 +50,7 @@ class TestCursorPagination(CursorBaseTestCase):
             object_count += page_size
             page_count += 1
 
-            cursor = paginator2.next_cursor()
+            cursor = next(paginator2)
             paginator2.from_cursor(cursor)
 
         self.assertEqual(object_count, self.NUM_ITEMS - self.PAGE_SIZE)
