@@ -13,9 +13,6 @@ class CursorQueryset(models.query.QuerySet):
     def next_cursor(self):
         return Cursor.from_queryset(self, ascending=True)
 
-    def previous_cursor(self):
-        return Cursor.from_queryset(self, ascending=False)
-
     def from_cursor(self, cursor):
         if not isinstance(cursor, BaseCursor):
             cursor = Cursor.from_token(cursor)

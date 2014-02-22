@@ -33,7 +33,3 @@ class Paginator(object):
     def next_cursor(self):
         assert isinstance(self.object_list, CursorQueryset)
         return self.object_list.next_cursor()
-
-    def previous_cursor(self):
-        assert isinstance(self.object_list, CursorQueryset)
-        return self.object_list.previous_cursor()
