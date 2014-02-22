@@ -15,7 +15,7 @@ from django.core.signing import (
 
 from django.utils.encoding import force_bytes
 
-from ..cursors import CursorParameter, BaseCursor
+from ..cursors import CursorParameter, Cursor
 
 
 class CursorJSONEncoder(DjangoJSONEncoder):
@@ -88,13 +88,12 @@ def loads(s, key=None, salt='django.core.signing',
     return json.loads(data.decode('latin-1'))
 
 
-class SignedBase64Cursor(BaseCursor):
+class SignedBase64Cursor(Cursor):
 
-    def to_token(self):
+    def _get_token(self):
         return dumps(self.parameters)
 
-    @classmethod
-    def from_token(cls, token):
+    def _set_token(self, token):
         params = loads(token)
         parameters = [CursorParameter.from_json(p) for p in params]
-        return cls(*parameters)
+        self.parameters = parameters
