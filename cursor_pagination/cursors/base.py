@@ -3,6 +3,8 @@ from __future__ import absolute_import
 
 import operator
 
+from django.utils.six.moves import reduce
+
 from django.utils.encoding import python_2_unicode_compatible
 
 from django.db.models import Q
