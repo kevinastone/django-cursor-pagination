@@ -34,41 +34,6 @@ class TestCursorPagination(CursorBaseTestCase):
         self.assertEqual(object_count, self.NUM_ITEMS)
         self.assertEqual(page_count, self.NUM_ITEMS / self.PAGE_SIZE)
 
-    def test_reverse_iteration(self):
-        queryset = TestModel.objects.all()
-        page_count = 0
-        object_count = 0
-
-        # Roll the iterator to the end going forward
-        paginator = Paginator(queryset, self.PAGE_SIZE)
-        for i in range(self.TOO_MANY_PAGES):
-            page_size = len(paginator)
-            if not page_size:
-                break
-
-            cursor = paginator.next_cursor()
-            paginator.from_cursor(cursor)
-
-        # Now let's work it backwards
-        reverse_cursor = cursor.reverse()
-        
-        paginator = Paginator(queryset, self.PAGE_SIZE, cursor=reverse_cursor)
-        import pdb; pdb.set_trace()
-        
-        for i in range(self.TOO_MANY_PAGES):
-            page_size = len(paginator)
-            if not page_size:
-                break
-            object_count += page_size
-            page_count += 1
-
-            cursor = paginator.previous_cursor()
-            paginator.from_cursor(cursor)
-
-        self.assertEqual(object_count, self.NUM_ITEMS - self.PAGE_SIZE)
-        self.assertEqual(page_count,
-            (self.NUM_ITEMS - self.PAGE_SIZE) / self.PAGE_SIZE)
-
     def test_construction(self):
         queryset = TestModel.objects.all()
         page_count = 0
@@ -90,7 +55,7 @@ class TestCursorPagination(CursorBaseTestCase):
 
         self.assertEqual(object_count, self.NUM_ITEMS - self.PAGE_SIZE)
         self.assertEqual(page_count,
-            (self.NUM_ITEMS - self.PAGE_SIZE) / self.PAGE_SIZE)
+                         (self.NUM_ITEMS - self.PAGE_SIZE) / self.PAGE_SIZE)
 
     def test_indexing(self):
         queryset = TestModel.objects.all()

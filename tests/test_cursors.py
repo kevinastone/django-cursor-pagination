@@ -58,7 +58,7 @@ class CursorInterfaceTestMixin(object):
     def test_repr_constructor_syntax(self):
         """
         Ensures that the :func:`repr` creates a valid constructor.
-        """        
+        """
         original_queryset = TestModel.objects.all()
         value = original_queryset[self.PAGE_SIZE]
         cursor = self.cursor_class.from_queryset(original_queryset, value)
@@ -69,7 +69,6 @@ class CursorInterfaceTestMixin(object):
         })
 
         self.assertEqual(cursor, cursor2)
-
 
     def test_serialization(self):
         original_queryset = TestModel.objects.all()
