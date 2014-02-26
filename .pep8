@@ -1,0 +1,10 @@
+[pep8]
+
+# List of PEP8 Errors and Warnings to Ignore
+# E501  line too long
+
+ignore = E501
+
+[flake8]
+
+ignore = E501
