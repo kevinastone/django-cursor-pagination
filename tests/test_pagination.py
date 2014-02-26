@@ -21,15 +21,10 @@ class TestCursorPagination(CursorBaseTestCase):
         page_count = 0
         object_count = 0
         paginator = Paginator(queryset, self.PAGE_SIZE)
-        for i in range(self.TOO_MANY_PAGES):
-            page_size = len(paginator)
-            if not page_size:
-                break
+        for cursor in paginator:
+            page_size = len(cursor.queryset[:self.PAGE_SIZE])
             object_count += page_size
             page_count += 1
-
-            cursor = next(paginator)
-            paginator.from_cursor(cursor)
 
         self.assertEqual(object_count, self.NUM_ITEMS)
         self.assertEqual(page_count, self.NUM_ITEMS / self.PAGE_SIZE)
@@ -39,27 +34,24 @@ class TestCursorPagination(CursorBaseTestCase):
         page_count = 0
         object_count = 0
         paginator = Paginator(queryset, self.PAGE_SIZE)
-
-        cursor = next(paginator)
+        cursor = next(iter(paginator))
         paginator2 = Paginator(queryset, self.PAGE_SIZE, cursor=cursor)
 
         for i in range(self.TOO_MANY_PAGES):
-            page_size = len(paginator2)
-            if not page_size:
-                break
+            page_size = len(cursor.queryset[:self.PAGE_SIZE])
             object_count += page_size
             page_count += 1
 
-            cursor = next(paginator2)
-            paginator2.from_cursor(cursor)
+            it = iter(paginator2)
 
-        self.assertEqual(object_count, self.NUM_ITEMS - self.PAGE_SIZE)
+            try:
+                next(it)
+                cursor = next(it)
+            except StopIteration:
+                break
+
+            paginator2.update_cursor(cursor)
+
+        self.assertEqual(object_count, self.NUM_ITEMS)
         self.assertEqual(page_count,
-                         (self.NUM_ITEMS - self.PAGE_SIZE) / self.PAGE_SIZE)
-
-    def test_indexing(self):
-        queryset = TestModel.objects.all()
-        paginator = Paginator(queryset, self.PAGE_SIZE)
-
-        for i in range(0, self.PAGE_SIZE):
-            self.assertEqual(queryset[i], paginator[i])
+                         self.NUM_ITEMS / self.PAGE_SIZE)

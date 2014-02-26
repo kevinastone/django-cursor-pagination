@@ -4,16 +4,16 @@ from __future__ import absolute_import
 
 from django.db import models
 
+from .cursors import Cursor
 # TODO: Make this configurable
-from .cursors import BaseCursor
-from .cursors.signed import SignedBase64Cursor as Cursor
+from .cursors.signed import SignedBase64Cursor
 
 
 class CursorQueryset(models.query.QuerySet):
-    def next_cursor(self):
-        return Cursor.from_queryset(self, ascending=True)
+    def cursor(self):
+        return SignedBase64Cursor(self)
 
     def from_cursor(self, cursor):
-        if not isinstance(cursor, BaseCursor):
-            cursor = Cursor.from_token(cursor)
-        return cursor.queryset(self)
+        if not isinstance(cursor, Cursor):
+            cursor = SignedBase64Cursor(self, token=cursor)
+        return cursor.queryset
