@@ -10,6 +10,8 @@ from django.utils.functional import lazy_property
 from django.db.models import Q
 from django.db.models.sql.query import Query
 
+from ..query import reduce_redundant_clauses
+
 
 class MissingBorderObjectException(Exception):
     pass
@@ -171,7 +173,12 @@ class Cursor(object):
         if params:
             queryset = queryset.filter(reduce(operator.or_, params))
         ordering = self.get_ordering()
-        return queryset.order_by(*ordering)
+        qs = queryset.order_by(*ordering)
+        # Remove redundant query where clauses
+
+        qs.query = reduce_redundant_clauses(qs.query)
+
+        return qs
 
     def _get_queryset(self):
         return self._queryset_from_parameters()

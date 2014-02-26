@@ -9,8 +9,6 @@ Tests for `django-cursor-pagination` queryset module.
 """
 from __future__ import absolute_import
 
-import unittest
-
 from cursor_pagination.queryset import CursorQueryset
 
 from .base import CursorBaseTestCase
@@ -21,14 +19,13 @@ from .factories import TestModelFactory
 
 class TestCursorPagination(CursorBaseTestCase):
 
-    @unittest.skip("Need to de-dupe filter params for cursor generation")
     def test_queryset_where_clauses(self):
         queryset = CursorQueryset(model=TestModel).all()
 
         cursor1 = queryset[:self.PAGE_SIZE].cursor()
         queryset1 = queryset.from_cursor(cursor1)
 
-        cursor2 = queryset1[self.PAGE_SIZE:2*self.PAGE_SIZE].cursor()
+        cursor2 = queryset1[self.PAGE_SIZE:2 * self.PAGE_SIZE].cursor()
         queryset2 = queryset.from_cursor(cursor2)
 
         self.assertEqual(
