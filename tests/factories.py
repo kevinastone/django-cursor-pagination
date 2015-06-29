@@ -9,7 +9,8 @@ from .models import TestModel
 
 
 class TestModelFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = TestModel
-
     date_field = fuzzy.FuzzyDate(datetime.date(2000, 1, 1))
     count_field = fuzzy.FuzzyInteger(1, 200)
+
+    class Meta:
+        model = TestModel

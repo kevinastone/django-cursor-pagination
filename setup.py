@@ -36,7 +36,7 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        "django>=1.5",
+        "django>=1.5,<1.7",
         "django-model-utils",  # Django 1.7 adds native from_queryset support so this won't be needed
     ],
     license="BSD",

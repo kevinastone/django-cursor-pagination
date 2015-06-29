@@ -8,4 +8,4 @@ flake8>=2.1.0
 tox>=1.7.0
 
 # Additional test requirements go here
-factory_boy>=2.1
+factory_boy>=2.5
