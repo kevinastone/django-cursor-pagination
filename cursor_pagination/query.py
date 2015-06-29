@@ -30,6 +30,9 @@ def _unroll_where_clause(where):
         if len(where.children) != 1:
             break
         child = where.children[0]
+        if not hasattr(child, 'connector'):
+            # Only child, and it doesn't have a connector? We found the terminal clause
+            return where
         if isinstance(child, (list, tuple)):
             where = child
             break
@@ -60,6 +63,7 @@ def _reduce_redundant_clauses(where):
             other_clauses.append(_reduce_redundant_clauses(child))
 
     if not duplicate_found:
+        import ipdb; ipdb.set_trace()
         return where
 
     new_where = where.__class__()

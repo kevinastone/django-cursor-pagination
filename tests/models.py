@@ -6,7 +6,7 @@ from django.db import models
 from cursor_pagination.managers import CursorManager
 
 
-class TestModel(models.Model):
+class ExampleModel(models.Model):
     date_field = models.DateField()
     count_field = models.PositiveIntegerField()
 

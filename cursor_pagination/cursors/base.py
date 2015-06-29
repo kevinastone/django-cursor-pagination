@@ -176,7 +176,7 @@ class Cursor(object):
         qs = queryset.order_by(*ordering)
         # Remove redundant query where clauses
 
-        qs.query = reduce_redundant_clauses(qs.query)
+        # qs.query = reduce_redundant_clauses(qs.query)
 
         return qs
 

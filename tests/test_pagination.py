@@ -12,12 +12,12 @@ from __future__ import absolute_import
 from cursor_pagination.paginator import Paginator
 
 from .base import CursorBaseTestCase
-from .models import TestModel
+from .models import ExampleModel
 
 
 class TestCursorPagination(CursorBaseTestCase):
     def test_iteration(self):
-        queryset = TestModel.objects.all()
+        queryset = ExampleModel.objects.all()
         page_count = 0
         object_count = 0
         paginator = Paginator(queryset, self.PAGE_SIZE)
@@ -30,7 +30,7 @@ class TestCursorPagination(CursorBaseTestCase):
         self.assertEqual(page_count, self.NUM_ITEMS / self.PAGE_SIZE)
 
     def test_construction(self):
-        queryset = TestModel.objects.all()
+        queryset = ExampleModel.objects.all()
         page_count = 0
         object_count = 0
         paginator = Paginator(queryset, self.PAGE_SIZE)

@@ -14,7 +14,7 @@ from django.utils import six
 from cursor_pagination.cursors.signed import SignedBase64Cursor
 
 from .base import CursorBaseTestCase
-from .models import TestModel
+from .models import ExampleModel
 
 
 class CursorInterfaceTestMixin(object):
@@ -22,7 +22,7 @@ class CursorInterfaceTestMixin(object):
         """
         Tests generating tokens either via direct call or conversion to string.
         """
-        queryset = TestModel.objects.all()
+        queryset = ExampleModel.objects.all()
         value = queryset[self.PAGE_SIZE]
         cursor = self.cursor_class(queryset, border_obj=value)
 
@@ -34,7 +34,7 @@ class CursorInterfaceTestMixin(object):
         """
         Ensures that tokenized cursors return the same cursor.
         """
-        queryset = TestModel.objects.all()
+        queryset = ExampleModel.objects.all()
         value = queryset[self.PAGE_SIZE]
         cursor = self.cursor_class(queryset, border_obj=value)
 
@@ -47,7 +47,7 @@ class CursorInterfaceTestMixin(object):
         self.assertEqual(token, token2)
 
     def test_equivalence(self):
-        queryset = TestModel.objects.all()
+        queryset = ExampleModel.objects.all()
         value = queryset[self.PAGE_SIZE]
         cursor = self.cursor_class(queryset, border_obj=value)
         cursor2 = self.cursor_class(queryset, border_obj=value)
@@ -55,7 +55,7 @@ class CursorInterfaceTestMixin(object):
         self.assertEqual(cursor, cursor2)
 
     def test_serialization(self):
-        queryset = TestModel.objects.all()
+        queryset = ExampleModel.objects.all()
         value = queryset[self.PAGE_SIZE]
         cursor = self.cursor_class(queryset, border_obj=value)
 

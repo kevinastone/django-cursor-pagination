@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 from django.conf import settings
 
-settings.configure(
+DEFAULT_SETTINGS = dict(
     DEBUG=True,
     USE_TZ=True,
     DATABASES={
@@ -21,4 +21,11 @@ settings.configure(
     ],
     SITE_ID=1,
     NOSE_ARGS=['-s', '--logging-filter=tests,cursor_pagination'],
+    MIDDLEWARE_CLASSES=[],
 )
+
+
+def configure(**kwargs):
+    config = dict(DEFAULT_SETTINGS)
+    config.update(kwargs)
+    settings.configure(**config)

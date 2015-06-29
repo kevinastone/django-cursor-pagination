@@ -10,12 +10,12 @@ Tests for `django-cursor-pagination` managers module.
 from __future__ import absolute_import
 
 from .base import CursorBaseTestCase
-from .models import TestModel
+from .models import ExampleModel
 
 
 class TestCursorManagerByPrimaryKey(CursorBaseTestCase):
     def test_ordering_ascending(self):
-        qs = TestModel.objects.order_by('pk')
+        qs = ExampleModel.objects.order_by('pk')
         first_group = qs[:self.PAGE_SIZE]
         cursor = first_group.cursor()
 
@@ -34,7 +34,7 @@ class TestCursorManagerByPrimaryKey(CursorBaseTestCase):
             )
 
     def test_ordering_descending(self):
-        qs = TestModel.objects.order_by('-pk')
+        qs = ExampleModel.objects.order_by('-pk')
         first_group = qs[:self.PAGE_SIZE]
         cursor = first_group.cursor()
 
@@ -55,7 +55,7 @@ class TestCursorManagerByPrimaryKey(CursorBaseTestCase):
 
 class TestCursorManagerByInteger(CursorBaseTestCase):
     def test_ordering_ascending(self):
-        qs = TestModel.objects.order_by('count_field')
+        qs = ExampleModel.objects.order_by('count_field')
         first_group = qs[:self.PAGE_SIZE]
         cursor = first_group.cursor()
 
@@ -73,7 +73,7 @@ class TestCursorManagerByInteger(CursorBaseTestCase):
             )
 
     def test_ordering_descending(self):
-        qs = TestModel.objects.order_by('-count_field')
+        qs = ExampleModel.objects.order_by('-count_field')
         first_group = qs[:self.PAGE_SIZE]
         cursor = first_group.cursor()
 

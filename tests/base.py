@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 from django.test import TestCase
 
-from .factories import TestModelFactory
+from .factories import ExampleModelFactory
 
 
 class CursorBaseTestCase(TestCase):
@@ -13,4 +13,4 @@ class CursorBaseTestCase(TestCase):
 
     def setUp(self):
         for i in range(self.NUM_ITEMS):
-            TestModelFactory.create()
+            ExampleModelFactory.create()

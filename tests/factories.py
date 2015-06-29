@@ -5,12 +5,12 @@ import datetime
 import factory
 from factory import fuzzy
 
-from .models import TestModel
+from .models import ExampleModel
 
 
-class TestModelFactory(factory.DjangoModelFactory):
+class ExampleModelFactory(factory.DjangoModelFactory):
     date_field = fuzzy.FuzzyDate(datetime.date(2000, 1, 1))
     count_field = fuzzy.FuzzyInteger(1, 200)
 
     class Meta:
-        model = TestModel
+        model = ExampleModel

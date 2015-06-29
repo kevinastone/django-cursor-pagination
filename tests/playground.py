@@ -9,4 +9,4 @@ create_db()
 from tests.models import *  # flake8: noqa
 from tests.factories import *  # flake8: noqa
 
-for i in range(100): TestModelFactory.create()
+for i in range(100): ExampleModelFactory.create()
